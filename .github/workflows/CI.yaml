@@ -1,0 +1,38 @@
+name: UzbekVoice CI
+
+on:
+  push:
+    banches:
+      - askar
+
+  pull_request:
+    branches:
+    - askar
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8
+      - name: Run tests with coverage
+        env:
+          SECRET_KEY: ${{secrets.SECRET_KEY}}
+          DEBUG: ${{secrets.DEBUG}}
+          DB_ENGINE: ${{secrets.DB_ENGINE}}
+          DB_NAME: ${{secrets.DB_NAME}}
+          DB_ENGINE_DEBUG: ${{secrets.DB_ENGINE_DEBUG}}
+        run: |
+          pip install coverage
+          coverage run manage.py test
