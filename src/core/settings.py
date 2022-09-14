@@ -1,16 +1,20 @@
 import os
 import environ
+
 from datetime import timedelta
 
-env = environ.Env(
-    DEBUG=(bool, True)
-)
+
+# BASIC SETTINGS
+env = environ.Env(DEBUG=(bool, True))
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+# ENV VARIABLES
 DEBUG = env('DEBUG')
 SECRET_KEY = env('SECRET_KEY')
 ALLOWED_HOSTS = ['*']
 
+# INSTALLED APPS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -18,11 +22,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "corsheaders",
+    # Third Party
+    'corsheaders',
     'drf_yasg',
     'rest_framework',
+    # Local apps
+    'apps.sentence',
+    'apps.user',
+    'apps.voice',
 ]
 
+# MIDDLEWARES
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -34,8 +44,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'project.urls'
+# URL CONF
+ROOT_URLCONF = 'core.urls'
 
+# TEMPLATES
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -52,8 +64,10 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'project.wsgi.application'
+# WSGI
+WSGI_APPLICATION = 'core.wsgi.application'
 
+# DB
 if DEBUG:
     DATABASES = {
         'default': {
@@ -73,6 +87,7 @@ else:
         }
     }
 
+# PASSWORD VALIDATORS
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -88,6 +103,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# REST FRAMEWORK
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
@@ -97,6 +113,7 @@ REST_FRAMEWORK = {
     )
 }
 
+# SIMPLE JWT
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=200),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
@@ -126,23 +143,25 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
+# LOCATION SETTINGS
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Tashkent'
-
 USE_I18N = True
-
 USE_TZ = True
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC FILES
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'project/static')
+    os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static')
 ]
 
+# MEDIA FILES
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+# OTHER
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# CORS
 CORS_ALLOW_ALL_ORIGINS = True

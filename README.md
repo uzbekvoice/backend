@@ -1,7 +1,5 @@
-# backend
-Uzbekvoice.ai - voice and sentence collector backend
+## About project
+Uzbekvoice.ai's voice and sentence collecting backend.
 
-# Loyiha haqida
-Ushbu loyiha UzbekVoice platformasining backend qismini tashkil etadi.
-
-coming soon...
+## Useful
+You can read our [Wiki](https://github.com/uzbekvoice/backend/wiki) to get more information about project and find useful tips which will help you to contribute.
