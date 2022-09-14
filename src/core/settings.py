@@ -26,7 +26,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'rest_framework',
-    # Local apps
+    # Local Apps
     'apps.sentence',
     'apps.user',
     'apps.voice',
