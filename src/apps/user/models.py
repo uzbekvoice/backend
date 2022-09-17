@@ -11,7 +11,7 @@ class User(models.Model):
     full_name = models.CharField(max_length=200)
     td_id = models.IntegerField()
     gender = models.ForeignKey(Foo, on_delete=models.CASCADE)
-    year_of_birth = models.IntegerField()
+    year_of_birth = models.DateField(verbose_name='Input birth date...')
     accent_region = models.IntegerField()
     native_language = models.IntegerField()
     created_at = models.DateTimeField()
