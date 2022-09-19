@@ -14,8 +14,8 @@ class User(models.Model):
     year_of_birth = models.DateField(verbose_name='Input birth date...')
     accent_region = models.IntegerField()
     native_language = models.IntegerField()
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
     
     
     def __str__(self):
