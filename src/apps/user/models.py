@@ -28,10 +28,10 @@ class User(models.Model):
           QQ = 'Qq'
           
     full_name = models.CharField(max_length=200, help_text="Please enter full name...")
-    td_id = models.PositiveIntegerField(max_length=20, help_text="Please enter td id...")
+    td_id = models.PositiveIntegerField(help_text="Please enter td id...")
     gender = models.CharField(max_length=1, choices=GenderChoices.choices)
     year_of_birth = models.DateField(help_text="Please enter birth date...")
-    accent_region = models.CharField(choices=RegioinChoices.choices, help_text="Please enter region..."),
+    accent_region = models.CharField(max_length=16,choices=RegioinChoices.choices, help_text="Please enter region..."),
     native_language = models.CharField(max_length=2, choices=LanguageChoices.choices, help_text="Please choose language...")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
