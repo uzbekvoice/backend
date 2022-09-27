@@ -4,27 +4,28 @@ from django.db import models
 
 class User(models.Model):
     class GenderChoices(models.TextChoices):
-          MALE = 'M',
-          FEMALE = 'F',
+          MALE = 'M'
+          FEMALE = 'F'
           
     class RegioinChoices(models.TextChoices):
-          Andijon = "Andijon",
-          Buxoro = "Buxoro",
-          Fargona = "Farg'ona",
-          Jizzax = "Jizzax",
-          Xorazm = "Xorazm",
-          Namangan = "Namangan",
-          Navoiy = "Navoiy",
-          Qashqadaryo = "Qashqadaryo",
-          Qoraqalpogiston = "Qoraqalpog'iston",    
-          Samarqand = "Samarqand",    
-          Surxondaryo = "Surxondaryo",    
-          Toshkent = "Toshkent",    
+          Andijon = "Andijon"
+          Buxoro = "Buxoro"
+          Fargona = "Farg'ona"
+          Jizzax = "Jizzax"
+          Xorazm = "Xorazm"
+          Namangan = "Namangan"
+          Navoiy = "Navoiy"
+          Qashqadaryo = "Qashqadaryo"
+          Qoraqalpogiston = "Qoraqalpog'iston"    
+          Samarqand = "Samarqand" 
+          Surxondaryo = "Surxondaryo" 
+          Toshkent = "Toshkent viloyati"    
+          Toshkent_shahri = "Toshkent shahri"    
     
     class LanguageChoices(models.TextChoices):
-          UZ = 'Uz',
-          RU = 'Ru',
-          QR = 'Qr',
+          UZ = 'Uz'
+          RU = 'Ru'
+          QQ = 'Qq'
           
     full_name = models.CharField(max_length=200, help_text="Please enter full name...")
     td_id = models.PositiveIntegerField(max_length=20, help_text="Please enter td id...")
