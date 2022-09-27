@@ -31,14 +31,14 @@ class User(models.Model):
     td_id = models.PositiveIntegerField(help_text="Please enter td id...")
     gender = models.CharField(max_length=1, choices=GenderChoices.choices)
     year_of_birth = models.DateField(help_text="Please enter birth date...")
-    accent_region = models.CharField(max_length=16,choices=RegioinChoices.choices, help_text="Please enter region..."),
+    accent_region = models.CharField(max_length=18,choices=RegioinChoices.choices, help_text="Please enter region...")
     native_language = models.CharField(max_length=2, choices=LanguageChoices.choices, help_text="Please choose language...")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     
     def __str__(self):
-        return self.full_name
+        return self.accent_region
     
     
     class Meta:
