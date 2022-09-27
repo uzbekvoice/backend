@@ -1,21 +1,39 @@
 from django.db import models
 
-class Foo(models.Model):
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-    )
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+
 
 class User(models.Model):
-    full_name = models.CharField(max_length=200)
-    td_id = models.IntegerField()
-    gender = models.ForeignKey(Foo, on_delete=models.CASCADE)
-    year_of_birth = models.DateField(verbose_name='Input birth date...')
-    accent_region = models.IntegerField()
-    native_language = models.IntegerField()
+    class GenderChoices(models.TextChoices):
+          MALE = 'M',
+          FEMALE = 'F',
+          
+    class RegioinChoices(models.TextChoices):
+          Andijon = "Andijon",
+          Buxoro = "Buxoro",
+          Fargona = "Farg'ona",
+          Jizzax = "Jizzax",
+          Xorazm = "Xorazm",
+          Namangan = "Namangan",
+          Navoiy = "Navoiy",
+          Qashqadaryo = "Qashqadaryo",
+          Qoraqalpogiston = "Qoraqalpog'iston",    
+          Samarqand = "Samarqand",    
+          Surxondaryo = "Surxondaryo",    
+          Toshkent = "Toshkent",    
+    
+    class LanguageChoices(models.TextChoices):
+          UZ = 'Uz',
+          RU = 'Ru',
+          QR = 'Qr',
+          
+    full_name = models.CharField(max_length=200, help_text="Please enter full name...")
+    td_id = models.PositiveIntegerField(max_length=20, help_text="Please enter td id...")
+    gender = models.CharField(max_length=1, choices=GenderChoices.choices)
+    year_of_birth = models.DateField(help_text="Please enter birth date...")
+    accent_region = models.CharField(choices=RegioinChoices.choices, help_text="Please enter region..."),
+    native_language = models.CharField(max_length=2, choices=LanguageChoices.choices, help_text="Please choose language...")
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     
     def __str__(self):
