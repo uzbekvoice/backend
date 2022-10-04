@@ -5,6 +5,7 @@ from datetime import timedelta
 
 
 # BASIC SETTINGS
+PROJECT_NAME = "backend"
 env = environ.Env(DEBUG=(bool, True))
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
@@ -23,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     # Third Party
     'corsheaders',
     'drf_yasg',
@@ -31,6 +33,7 @@ INSTALLED_APPS = [
     'apps.sentence',
     'apps.user',
     'apps.voice',
+    'apps.api.v1',
 ]
 
 # MIDDLEWARES

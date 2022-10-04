@@ -27,9 +27,9 @@ class User(models.Model):
           QQ = 'Qq'
           
     full_name = models.CharField(max_length=200, help_text="Please enter full name...")
-    tg_id = models.PositiveIntegerField(help_text="Please enter td id...")
+    tg_id = models.PositiveIntegerField(unique=True, help_text="Please enter td id...")
     gender = models.CharField(max_length=1, choices=GenderChoices.choices)
-    year_of_birth = models.DateField(help_text="Please enter birth date...")
+    year_of_birth = models.CharField(max_length=4, help_text="Please enter birth date...")
     accent_region = models.CharField(max_length=18, choices=RegionChoices.choices, help_text="Please enter region...")
     native_language = models.CharField(
         max_length=2, choices=LanguageChoices.choices, help_text="Please choose language..."
