@@ -26,6 +26,7 @@ class UserViewSet(ModelViewSet, ViewKit):
         """Method to build JSONed data to put in response body"""
         return {
             "id": user_obj.id,
+            "full_name": user_obj.full_name,
             "tg_id": user_obj.tg_id,
             "gender": user_obj.gender,
             "year_of_birth": user_obj.year_of_birth,
@@ -74,6 +75,38 @@ class UserViewSet(ModelViewSet, ViewKit):
                 status_code = status.HTTP_201_CREATED
             except Exception as ex:
                 logger.warning(f"{ex}: Could not create User object and save it to DB.")
+
+        return Response(self.build_response(status_code, result_data), status=status_code)
+
+    def put(self, request, pk=None, *args, **kwargs):
+        """Method to handle PUT Request"""
+        status_code = status.HTTP_400_BAD_REQUEST
+        result_data = None
+        if pk:
+            serializer = UserSerializer(request.user, data=request.data, partial=False)
+            if serializer.is_valid():
+                try:
+                    result_data = User.objects.filter(pk=pk).update(**request.data)
+                    status_code = status.HTTP_200_OK
+                except Exception as ex:
+                    print(f"{ex}: Could not update User object and save it to DB.")
+                    logger.warning(f"{ex}: Could not update User object and save it to DB.")
+
+        return Response(self.build_response(status_code, result_data), status=status_code)
+
+    def patch(self, request, pk=None, *args, **kwargs):
+        """Method to handle PATCH Request"""
+        status_code = status.HTTP_400_BAD_REQUEST
+        result_data = None
+        if pk:
+            serializer = UserSerializer(request.user, data=request.data, partial=True)
+            if serializer.is_valid():
+                try:
+                    result_data = User.objects.filter(pk=pk).update(**request.data)
+                    status_code = status.HTTP_200_OK
+                except Exception as ex:
+                    print(f"{ex}: Could not update User object and save it to DB.")
+                    logger.warning(f"{ex}: Could not update User object and save it to DB.")
 
         return Response(self.build_response(status_code, result_data), status=status_code)
 
