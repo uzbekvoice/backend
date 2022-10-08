@@ -18,6 +18,7 @@ logger = logging.getLogger(PROJECT_NAME)
 class UserViewSet(ModelViewSet, ViewKit):
     """View Set class which implements CRUD Endpoints for User model"""
     permission_classes = [AllowAny]
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     model = User
 
@@ -69,6 +70,7 @@ class UserViewSet(ModelViewSet, ViewKit):
         result_data = None
 
         serializer = self.serializer_class(data=request.data)
+
         if serializer.is_valid():
             try:
                 result_data = self.build_result_data(self.get_query_manager().create(**serializer.data))
@@ -78,15 +80,15 @@ class UserViewSet(ModelViewSet, ViewKit):
 
         return Response(self.build_response(status_code, result_data), status=status_code)
 
-    def put(self, request, pk=None, *args, **kwargs):
+    def put(self, request, pk=None):
         """Method to handle PUT Request"""
         status_code = status.HTTP_400_BAD_REQUEST
         result_data = None
         if pk:
-            serializer = UserSerializer(request.user, data=request.data, partial=False)
+            serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 try:
-                    result_data = User.objects.filter(pk=pk).update(**request.data)
+                    result_data = User.objects.filter(pk=pk).update(**serializer.data)
                     status_code = status.HTTP_200_OK
                 except Exception as ex:
                     print(f"{ex}: Could not update User object and save it to DB.")
@@ -94,15 +96,16 @@ class UserViewSet(ModelViewSet, ViewKit):
 
         return Response(self.build_response(status_code, result_data), status=status_code)
 
-    def patch(self, request, pk=None, *args, **kwargs):
+    def patch(self, request, pk=None):
         """Method to handle PATCH Request"""
         status_code = status.HTTP_400_BAD_REQUEST
         result_data = None
         if pk:
-            serializer = UserSerializer(request.user, data=request.data, partial=True)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
             if serializer.is_valid():
                 try:
-                    result_data = User.objects.filter(pk=pk).update(**request.data)
+                    result_data = User.objects.filter(pk=pk).update(**serializer.data)
                     status_code = status.HTTP_200_OK
                 except Exception as ex:
                     print(f"{ex}: Could not update User object and save it to DB.")

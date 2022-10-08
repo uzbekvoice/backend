@@ -17,6 +17,7 @@ logger = logging.getLogger(PROJECT_NAME)
 class SentenceViewSet(ModelViewSet, ViewKit):
     """View Set class which implements CRUD Endpoints for Sentence model"""
     permission_classes = [AllowAny]
+    queryset = Sentence.objects.all()
     serializer_class = SentenceSerializer
     model = Sentence
 
@@ -82,10 +83,10 @@ class SentenceViewSet(ModelViewSet, ViewKit):
         status_code = status.HTTP_400_BAD_REQUEST
         result_data = None
         if pk:
-            serializer = SentenceSerializer(request.user, data=request.data, partial=False)
+            serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 try:
-                    result_data = Sentence.objects.filter(pk=pk).update(**request.data)
+                    result_data = Sentence.objects.filter(pk=pk).update(**serializer.data)
                     status_code = status.HTTP_200_OK
                 except Exception as ex:
                     print(f"{ex}: Could not update Sentence object and save it to DB.")
@@ -98,10 +99,11 @@ class SentenceViewSet(ModelViewSet, ViewKit):
         status_code = status.HTTP_400_BAD_REQUEST
         result_data = None
         if pk:
-            serializer = SentenceSerializer(request.user, data=request.data, partial=True)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
             if serializer.is_valid():
                 try:
-                    result_data = Sentence.objects.filter(pk=pk).update(**request.data)
+                    result_data = Sentence.objects.filter(pk=pk).update(**serializer.data)
                     status_code = status.HTTP_200_OK
                 except Exception as ex:
                     print(f"{ex}: Could not update Sentence object and save it to DB.")

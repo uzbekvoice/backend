@@ -17,6 +17,7 @@ logger = logging.getLogger(PROJECT_NAME)
 class VoiceViewSet(ModelViewSet, ViewKit):
     """View Set class which implements CRUD Endpoints for Voice model"""
     permission_classes = [AllowAny]
+    queryset = Voice.objects.all()
     serializer_class = VoiceSerializer
     model = Voice
 
@@ -83,10 +84,10 @@ class VoiceViewSet(ModelViewSet, ViewKit):
         status_code = status.HTTP_400_BAD_REQUEST
         result_data = None
         if pk:
-            serializer = VoiceSerializer(request.user, data=request.data, partial=False)
+            serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 try:
-                    result_data = Voice.objects.filter(pk=pk).update(**request.data)
+                    result_data = Voice.objects.filter(pk=pk).update(**serializer.data)
                     status_code = status.HTTP_200_OK
                 except Exception as ex:
                     print(f"{ex}: Could not update Voice object and save it to DB.")
@@ -99,10 +100,11 @@ class VoiceViewSet(ModelViewSet, ViewKit):
         status_code = status.HTTP_400_BAD_REQUEST
         result_data = None
         if pk:
-            serializer = VoiceSerializer(request.user, data=request.data, partial=True)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
             if serializer.is_valid():
                 try:
-                    result_data = Voice.objects.filter(pk=pk).update(**request.data)
+                    result_data = Voice.objects.filter(pk=pk).update(**serializer.data)
                     status_code = status.HTTP_200_OK
                 except Exception as ex:
                     print(f"{ex}: Could not update Voice object and save it to DB.")
@@ -128,6 +130,7 @@ class VoiceViewSet(ModelViewSet, ViewKit):
 class VoiceCheckerViewSet(ModelViewSet, ViewKit):
     """View Set class which implements CRUD Endpoints for VoiceChecker model"""
     permission_classes = [AllowAny]
+    queryset = VoiceChecker.objects.all()
     serializer_class = VoiceCheckerSerializer
     model = VoiceChecker
 
@@ -185,15 +188,15 @@ class VoiceCheckerViewSet(ModelViewSet, ViewKit):
 
         return Response(self.build_response(status_code, result_data), status=status_code)
 
-    def put(self, request, pk=None, *args, **kwargs):
+    def put(self, request, pk=None):
         """Method to handle PUT Request"""
         status_code = status.HTTP_400_BAD_REQUEST
         result_data = None
         if pk:
-            serializer = VoiceCheckerSerializer(request.user, data=request.data, partial=False)
+            serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 try:
-                    result_data = VoiceChecker.objects.filter(pk=pk).update(**request.data)
+                    result_data = VoiceChecker.objects.filter(pk=pk).update(**serializer.data)
                     status_code = status.HTTP_200_OK
                 except Exception as ex:
                     print(f"{ex}: Could not update VoiceChecker object and save it to DB.")
@@ -201,15 +204,16 @@ class VoiceCheckerViewSet(ModelViewSet, ViewKit):
 
         return Response(self.build_response(status_code, result_data), status=status_code)
 
-    def patch(self, request, pk=None, *args, **kwargs):
+    def patch(self, request, pk=None):
         """Method to handle PATCH Request"""
         status_code = status.HTTP_400_BAD_REQUEST
         result_data = None
         if pk:
-            serializer = VoiceCheckerSerializer(request.user, data=request.data, partial=True)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
             if serializer.is_valid():
                 try:
-                    result_data = VoiceChecker.objects.filter(pk=pk).update(**request.data)
+                    result_data = VoiceChecker.objects.filter(pk=pk).update(**serializer.data)
                     status_code = status.HTTP_200_OK
                 except Exception as ex:
                     print(f"{ex}: Could not update VoiceChecker object and save it to DB.")
