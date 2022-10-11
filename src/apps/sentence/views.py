@@ -69,6 +69,8 @@ class SentenceViewSet(ModelViewSet, ViewKit):
         result_data = None
 
         serializer = self.serializer_class(data=request.data)
+        print(serializer)
+        print(serializer.is_valid())
         if serializer.is_valid():
             try:
                 result_data = self.build_result_data(self.get_query_manager().create(**serializer.data))
