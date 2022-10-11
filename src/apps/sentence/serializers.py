@@ -5,7 +5,7 @@ from apps.user.models import User
 
 
 class SentenceSerializer(serializers.ModelSerializer):
-    """Serializer class for model User"""
+    """Serializer class for model Sentence"""
     text = serializers.CharField()
     author = serializers.PrimaryKeyRelatedField(
         many=False,
