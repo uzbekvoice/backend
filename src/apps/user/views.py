@@ -17,7 +17,7 @@ def user_list(request, pk=None):
     serializer = UserSerializer(model, many=True)
 
     if pk:
-        model = model.get(pk=pk)
+        model = model.get(tg_id=pk)
         serializer = UserSerializer(model, many=False)
     return Response(serializer.data)
 
@@ -33,7 +33,7 @@ def user_create(request):
 
 @api_view(["POST"])
 def user_update(request, pk):
-    model = User.objects.get(id=pk)
+    model = User.objects.get(tg_id=pk)
     serializer = UserSerializer(instance=model, data=request.data)
 
     if serializer.is_valid():
@@ -43,7 +43,7 @@ def user_update(request, pk):
 
 @api_view(["DELETE"])
 def user_delete(request, pk):
-    model = User.objects.get(pk=pk)
+    model = User.objects.get(tg_id=pk)
     model.delete()
     return Response('deleted')
 
