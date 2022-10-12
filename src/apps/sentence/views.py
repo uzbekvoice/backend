@@ -1,126 +1,63 @@
 import logging
 
-from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import api_view
 
-from core.view_kit import ViewKit
-from core.settings import PROJECT_NAME
 from .models import Sentence
+from apps.user.models import User
 from .serializers import SentenceSerializer
+from core.settings import PROJECT_NAME
 
 
 logger = logging.getLogger(PROJECT_NAME)
 
 
-class SentenceViewSet(ModelViewSet, ViewKit):
-    """View Set class which implements CRUD Endpoints for Sentence model"""
-    permission_classes = [AllowAny]
-    queryset = Sentence.objects.all()
-    serializer_class = SentenceSerializer
-    model = Sentence
+@api_view(['GET'])
+def sentence_list(request, pk=None):
+    model = Sentence.objects.all()
+    serializer = SentenceSerializer(model, many=True)
 
-    @classmethod
-    def build_result_data(cls, sentence_obj: Sentence):
-        """Method to build JSONed data to put in response body"""
-        return {
-            "id": sentence_obj.id,
-            "text": sentence_obj.text,
-            "author": sentence_obj.author,
-            "reads_count": sentence_obj.reads_count,
-            "is_valid": sentence_obj.is_valid,
-            "invalidity_reason": sentence_obj.invalidity_reason,
-            "created_at": sentence_obj.created_at,
-            "updated_at": sentence_obj.updated_at
-        }
+    if pk:
+        model = model.get(pk=pk)
+        serializer = SentenceSerializer(model, many=False)
+    return Response(serializer.data)
 
-    def get(self, request, pk=None, *args, **kwargs):
-        """Method to handle GET Request"""
-        status_code = status.HTTP_204_NO_CONTENT
-        result_data = None
 
-        if pk:
-            try:
-                result_data = self.build_result_data(self.get_query_manager().get(pk=pk))
-                status_code = status.HTTP_200_OK
+@api_view(['POST'])
+def sentence_create(request):
+    serializer = SentenceSerializer(data=request.data, partial=True)
+    print(serializer.is_valid())
+    if serializer.is_valid():
+        text = serializer.data['text']
+        id = serializer.data['author']
+        invalidity_reason = serializer.data['invalidity_reason']
+        is_valid = serializer.data['is_valid']
 
-            except Exception as ex:
-                logger.warning(f"{ex}: Could not get Sentence object by ID: {pk}.")
+        author = User.objects.get(id=id)
+        Sentence.objects.create(
+            text=text,
+            author=author,
+            invalidity_reason=invalidity_reason,
+            is_valid=is_valid
+        )
+    return Response(serializer.data)
 
-        return Response(self.build_response(status_code, result_data), status=status_code)
 
-    def list(self, request, *args, **kwargs):
-        """Method to handle GET Request for List View"""
-        status_code = status.HTTP_204_NO_CONTENT
-        result_data = None
+@api_view(["POST"])
+def sentence_update(request, pk):
+    model = Sentence.objects.get(pk=pk)
+    serializer = SentenceSerializer(instance=model, data=request.data, partial=True)
 
-        try:
-            result_data = [self.build_result_data(sentence_obj) for sentence_obj in self.get_query_manager().all()]
-            status_code = status.HTTP_200_OK
-        except Exception as ex:
-            logger.warning(f"{ex}: Could not get list of Sentence objects.")
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
 
-        return Response(self.build_response(status_code, result_data), status=status_code)
 
-    def post(self, request):
-        """Method to handle POST Request"""
-        status_code = status.HTTP_400_BAD_REQUEST
-        result_data = None
+@api_view(["DELETE"])
+def sentence_delete(request, pk):
+    model = Sentence.objects.get(pk=pk)
+    model.delete()
+    return Response('deleted')
 
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            try:
-                result_data = self.build_result_data(self.get_query_manager().create(**serializer.data))
-                status_code = status.HTTP_201_CREATED
-            except Exception as ex:
-                logger.warning(f"{ex}: Could not create Sentence object and save it to DB.")
 
-        return Response(self.build_response(status_code, result_data), status=status_code)
 
-    def put(self, request, pk=None, *args, **kwargs):
-        """Method to handle PUT Request"""
-        status_code = status.HTTP_400_BAD_REQUEST
-        result_data = None
-        if pk:
-            serializer = self.serializer_class(data=request.data)
-            if serializer.is_valid():
-                try:
-                    result_data = Sentence.objects.filter(pk=pk).update(**serializer.data)
-                    status_code = status.HTTP_200_OK
-                except Exception as ex:
-                    print(f"{ex}: Could not update Sentence object and save it to DB.")
-                    logger.warning(f"{ex}: Could not update Sentence object and save it to DB.")
-
-        return Response(self.build_response(status_code, result_data), status=status_code)
-
-    def patch(self, request, pk=None, *args, **kwargs):
-        """Method to handle PATCH Request"""
-        status_code = status.HTTP_400_BAD_REQUEST
-        result_data = None
-        if pk:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=True)
-            if serializer.is_valid():
-                try:
-                    result_data = Sentence.objects.filter(pk=pk).update(**serializer.data)
-                    status_code = status.HTTP_200_OK
-                except Exception as ex:
-                    print(f"{ex}: Could not update Sentence object and save it to DB.")
-                    logger.warning(f"{ex}: Could not update Sentence object and save it to DB.")
-
-        return Response(self.build_response(status_code, result_data), status=status_code)
-
-    def delete(self, request, pk=None):
-        """Method to handle DELETE Request"""
-        status_code = status.HTTP_400_BAD_REQUEST
-        result_data = None
-
-        if pk:
-            try:
-                self.get_query_manager().get(pk=pk).delete()
-                status_code = status.HTTP_200_OK
-            except Exception as ex:
-                logger.warning(f"{ex}: Could not delete Sentence object with ID: {pk}")
-
-        return Response(self.build_response(status_code, result_data), status=status_code)
