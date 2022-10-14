@@ -5,25 +5,11 @@ from apps.user.models import User
 from apps.sentence.models import Sentence
 
 
-class VoiceSerializer(serializers.ModelSerializer):
+class VoiceSerializer(serializers.Serializer):
     """Serializer class for model Voice"""
     audio_url = serializers.URLField()
-    author = serializers.PrimaryKeyRelatedField(
-        many=False,
-        read_only=False,
-        queryset=User.objects.all()
-    )
-    sentence = serializers.PrimaryKeyRelatedField(
-        many=False,
-        read_only=False,
-        queryset=Sentence.objects.all()
-    )
-    is_valid = serializers.BooleanField()
-    invalidity_reason = serializers.IntegerField()
-
-    class Meta:
-        model = Voice
-        fields = "__all__"
+    author = serializers.IntegerField()
+    sentence = serializers.IntegerField()
 
 
 class VoiceCheckerSerializer(serializers.ModelSerializer):

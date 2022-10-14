@@ -12,45 +12,51 @@ from core.settings import PROJECT_NAME
 logger = logging.getLogger(PROJECT_NAME)
 
 
+def build_respone_data(sentence_obj: Sentence):
+    return {
+        'id': sentence_obj.id,
+        'tg_id': sentence_obj.author.tg_id,
+        'text': sentence_obj.text,
+        'status': sentence_obj.status,
+        'is_read': sentence_obj.is_read,
+        'created_at': sentence_obj.created_at,
+        'updated_at': sentence_obj.updated_at
+    }
+
 @api_view(['GET'])
 def sentence_list(request, pk=None):
-    model = Sentence.objects.all()
-    serializer = SentenceSerializer(model, many=True)
-
     if pk:
-        model = model.get(pk=pk)
-        serializer = SentenceSerializer(model, many=False)
-    return Response(serializer.data)
+        model = Sentence.objects.get(pk=pk)
+        data = build_respone_data(model)
+    else:
+        model = Sentence.objects.all()
+        data = [build_respone_data(sentence_obj) for sentence_obj in model]
+    return Response(data=data)
 
 
 @api_view(['POST'])
 def sentence_create(request):
     serializer = SentenceSerializer(data=request.data, partial=True)
-    print(serializer.is_valid())
     if serializer.is_valid():
         text = serializer.data['text']
-        id = serializer.data['author']
-        invalidity_reason = serializer.data['invalidity_reason']
-        is_valid = serializer.data['is_valid']
-
-        author = User.objects.get(id=id)
-        Sentence.objects.create(
-            text=text,
-            author=author,
-            invalidity_reason=invalidity_reason,
-            is_valid=is_valid
-        )
-    return Response(serializer.data)
+        tg_id = serializer.data['tg_id']
+        author = User.objects.get(tg_id=tg_id)
+        sentence = Sentence.objects.create(text=text, author=author)
+        return Response(build_respone_data(sentence))
+    return Response(status=400)
 
 
 @api_view(["POST"])
 def sentence_update(request, pk):
-    model = Sentence.objects.get(pk=pk)
-    serializer = SentenceSerializer(instance=model, data=request.data, partial=True)
-
+    model = Sentence.objects.filter(pk=pk)
+    serializer = SentenceSerializer(data=request.data, partial=True)
     if serializer.is_valid():
-        serializer.save()
-    return Response(serializer.data)
+        text = serializer.data['text']
+        tg_id = serializer.data['tg_id']
+        author = User.objects.get(tg_id=tg_id)
+        model.update(text=text, author=author)
+
+    return Response(status=200)
 
 
 @api_view(["DELETE"])

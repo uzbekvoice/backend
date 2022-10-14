@@ -1,6 +1,7 @@
 import logging
 
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 
 from .models import User
@@ -17,7 +18,7 @@ def user_list(request, pk=None):
     serializer = UserSerializer(model, many=True)
 
     if pk:
-        model = model.get(tg_id=pk)
+        model = get_object_or_404(model, tg_id=pk)
         serializer = UserSerializer(model, many=False)
     return Response(serializer.data)
 
@@ -46,6 +47,4 @@ def user_delete(request, pk):
     model = User.objects.get(tg_id=pk)
     model.delete()
     return Response('deleted')
-
-
 

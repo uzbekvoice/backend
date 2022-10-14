@@ -1,5 +1,9 @@
 from django.urls import path
 
+from .views import (
+    record_voice,
+    check_voice
+)
 from apps.user.views import (
     user_list,
     user_create,
@@ -28,6 +32,10 @@ from apps.voice.views import (
 )
 
 urlpatterns = [
+    # Business Logic
+    path('voice/record/', record_voice, name='record-voice'),
+    path('voice/check/', check_voice, name='check-voice'),
+
     # User Endpoints
     path('user/', user_list, name='user-list'),
     path('user/<int:pk>/', user_list, name='user-detail'),

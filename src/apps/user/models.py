@@ -34,6 +34,8 @@ class User(models.Model):
     native_language = models.CharField(
         max_length=2, choices=LanguageChoices.choices, help_text="Please choose language..."
     )
+    karma = models.IntegerField(default=0)
+    rating = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

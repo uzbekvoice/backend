@@ -1,20 +1,9 @@
 from rest_framework import serializers
 
-from .models import Sentence
-from apps.user.models import User
+from apps.sentence.models import Sentence
 
 
-class SentenceSerializer(serializers.ModelSerializer):
+class SentenceSerializer(serializers.Serializer):
     """Serializer class for model Sentence"""
     text = serializers.CharField()
-    author = serializers.PrimaryKeyRelatedField(
-        many=False,
-        read_only=False,
-        queryset=User.objects.all()
-    )
-    is_valid = serializers.BooleanField()
-    invalidity_reason = serializers.IntegerField()
-
-    class Meta:
-        model = Sentence
-        fields = "__all__"
+    tg_id = serializers.IntegerField()

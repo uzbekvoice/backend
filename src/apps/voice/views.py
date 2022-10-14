@@ -13,16 +13,28 @@ from apps.sentence.models import Sentence
 logger = logging.getLogger(PROJECT_NAME)
 
 
+def build_respone_data(voice_obj: Voice):
+    return {
+        'id': voice_obj.id,
+        'audio_url': voice_obj.audio_url,
+        'tg_id': voice_obj.author.tg_id,
+        'text': voice_obj.sentence.text,
+        'status': voice_obj.status,
+        'created_at': voice_obj.created_at,
+        'updated_at': voice_obj.updated_at
+    }
+
+
 # Voice CRUD
 @api_view(['GET'])
 def voice_list(request, pk=None):
-    model = Voice.objects.all()
-    serializer = VoiceSerializer(model, many=True)
-
     if pk:
-        model = model.get(pk=pk)
-        serializer = VoiceSerializer(model, many=False)
-    return Response(serializer.data)
+        model = Voice.objects.get(pk=pk)
+        data = build_respone_data(model)
+    else:
+        model = Voice.objects.all()
+        data = [build_respone_data(voice_obj) for voice_obj in model]
+    return Response(data=data)
 
 
 @api_view(['POST'])
@@ -30,30 +42,30 @@ def voice_create(request):
     serializer = VoiceSerializer(data=request.data, partial=True)
     if serializer.is_valid():
         audio_url = serializer.data['audio_url']
-        author_id = serializer.data['author']
+        author_tg_id = serializer.data['author']
         sentence_id = serializer.data['sentence']
-        is_valid = serializer.data['is_valid']
-        invalidity_reason = serializer.data['invalidity_reason']
-
-        author = User.objects.get(id=author_id)
+        author = User.objects.get(tg_id=author_tg_id)
         sentence = Sentence.objects.get(id=sentence_id)
         Voice.objects.create(
             audio_url=audio_url,
             author=author,
-            sentence=sentence,
-            is_valid=is_valid,
-            invalidity_reason=invalidity_reason
+            sentence=sentence
         )
+        Sentence.objects.filter(id=sentence_id).update(is_read=True)
     return Response(serializer.data)
 
 
 @api_view(["POST"])
 def voice_update(request, pk):
-    model = Voice.objects.get(pk=pk)
-    serializer = VoiceSerializer(instance=model, data=request.data, partial=True)
-
+    model = Voice.objects.filter(pk=pk)
+    serializer = VoiceSerializer(data=request.data, partial=True)
     if serializer.is_valid():
-        serializer.save()
+        audio_url = serializer.data['audio_url']
+        author_tg_id = serializer.data['author']
+        sentence_id = serializer.data['sentence']
+        author = User.objects.get(tg_id=author_tg_id)
+        sentence = Sentence.objects.get(id=sentence_id)
+        model.update(audio_url=audio_url, author=author, sentence=sentence)
     return Response(serializer.data)
 
 
